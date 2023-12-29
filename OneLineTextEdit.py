@@ -10,7 +10,6 @@ class OneLineTextEdit(QTextEdit):
         self.setMaximumHeight(30)
         self.setPlaceholderText("Enter new chapter name here...")
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setAcceptRichText(False)        
 
     def keyPressEvent(self, event):

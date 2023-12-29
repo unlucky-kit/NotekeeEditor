@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt, QPoint, QSize
 from PyQt5.QtGui import QFont, QPixmap, QPainter, QImage
 from styles import *
 import json
-import base64
 from PIL import Image
 from OneLineTextEdit import *
 import os

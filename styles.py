@@ -460,7 +460,7 @@ plain_problem_button_style_dark = """
 """
 
 # Choose the styles based on the lightness
-if lightness > 162:
+if False:
     print(lightness)
     # Light mode
     button_style = button_style_light
