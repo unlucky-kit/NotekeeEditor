@@ -1,0 +1,6 @@
+# *.json
+images/
+
+*.DS_Store
+
+*.pyc
