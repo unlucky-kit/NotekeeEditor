@@ -1,10 +1,21 @@
-from PyQt5.QtGui import QPalette
-from PyQt5.QtWidgets import QApplication
+# from settings import Settings
 
-# Get the lightness of the background color
-lightness = QApplication.palette().color(QPalette.Window).lightness()
 
-# Define styles for light mode
+app_style_light = """
+    QWidget {
+        background-color: #F0F0F0;
+        color: #000000;
+    }
+"""
+
+app_style_dark = """
+    QWidget {
+        background-color: #2b2b2b;
+        color: #ffffff; 
+    }  
+"""
+
+
 button_style_light = """
     QPushButton {
         background-color: #c0c0c0;
@@ -24,25 +35,6 @@ button_style_light = """
     }
 """
 
-focused_button_style_light = """
-    QPushButton {
-        font-size: 18px;
-        color: rgba(0, 0, 0, 1);
-        background-color: transparent;
-        border: none;
-    }
-"""
-
-unfocused_button_style_light = """
-    QPushButton {
-        font-size: 16px;
-        color: rgba(0, 0, 0, 0.5);
-        background-color: transparent;
-        border: none;
-    }
-"""
-
-# Define styles for dark mode
 button_style_dark = """
     QPushButton {
         background-color: #707070;
@@ -62,10 +54,30 @@ button_style_dark = """
     }
 """
 
+
+focused_button_style_light = """
+    QPushButton {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 1);
+        background-color: transparent;
+        border: none;
+    }
+"""
+
 focused_button_style_dark = """
     QPushButton {
         font-size: 18px;
         color: rgba(255, 255, 255, 1);
+        background-color: transparent;
+        border: none;
+    }
+"""
+
+
+unfocused_button_style_light = """
+    QPushButton {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.5);
         background-color: transparent;
         border: none;
     }
@@ -79,6 +91,7 @@ unfocused_button_style_dark = """
         border: none;
     }
 """
+
 
 disabled_button_style_light = """
     QPushButton {
@@ -106,7 +119,7 @@ disabled_button_style_dark = """
     }
 """
 
-# Accepts an integer and returns a string
+
 top_chapter_button_light = """
     QPushButton {
         background-color: transparent;
@@ -151,6 +164,7 @@ top_chapter_button_dark = """
     }
 """
 
+
 unselected_top_chapter_button_style = """
         QPushButton {  
         background-color: transparent;
@@ -190,7 +204,29 @@ chapter_button_style_selected = """
 
 """
 
-chapter_button_style = """
+
+chapter_button_style_light = """
+    QPushButton {
+        background-color: transparent;
+        border: 1px solid #AAAAAA;
+        color: #000000;
+        text-align: left;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 0px;
+        padding: 0px 5px;
+        height: 30px;
+        width: 100%;
+    }
+    QPushButton:hover {
+        background-color: #D0D0D0;
+    }
+    QPushButton:pressed {
+        background-color: #C0C0C0;
+    }
+"""
+
+chapter_button_style_dark = """
     QPushButton {
         background-color: transparent;
         border: 1px solid #101010;
@@ -210,6 +246,7 @@ chapter_button_style = """
         background-color: #202020;
     }
 """
+
 
 link_button_style_light = """
     QPushButton {
@@ -248,12 +285,13 @@ link_button_style_dark = """
     }
 """
 
+
 checkmark_button_style_light = """
     QPushButton {
         font-size: 30px;
         background-color: transparent;
-        border: 1px solid #101010;
-        color: #FFFFFF;
+        border: 1px solid #AAAAAA;
+        color: #000000;
         text-align: center;
         text-decoration: none;
         font-size: 12px;
@@ -262,10 +300,10 @@ checkmark_button_style_light = """
         width: 30px;
     }
     QPushButton:hover {
-        background-color: #303030;
+        background-color: #D0D0D0;
     }
     QPushButton:pressed {
-        background-color: #202020;
+        background-color: #C0C0C0;
     }
 """
 
@@ -290,6 +328,7 @@ checkmark_button_style_dark = """
     }
 """
 
+
 zoom_button_style_light = """
     QPushButton {
         background-color: transparent;
@@ -302,9 +341,10 @@ zoom_button_style_light = """
     }
     QPushButton:hover {
         text-decoration: underline;
+        color: #0077fc;
     }
     QPushButton:pressed {
-        color: #111111;
+        color: #0088fc;
     }
 """
 
@@ -326,6 +366,7 @@ zoom_button_style_dark = """
         color: #0088fc;
     }
 """
+
 
 delete_button_style_light = """
     QPushButton {
@@ -365,6 +406,7 @@ delete_button_style_dark = """
     }
 """
 
+
 plain_chapter_button_style_light = """
     QPushButton {
         background-color: transparent;
@@ -380,12 +422,10 @@ plain_chapter_button_style_light = """
         width: 100%;
     }
     QPushButton:hover {
-        text-decoration: underline;
-        color: black;
+        color: #101010;
     }
     QPushButton:pressed {
-        text-decoration: underline;
-        color: "#191919";
+        color: #191919;
     }
 """
 
@@ -404,14 +444,13 @@ plain_chapter_button_style_dark = """
         width: 100%;
     }
     QPushButton:hover {
-        text-decoration: underline;
-        color: white;
+        color: #F0F0F0;
     }
     QPushButton:pressed {
-        text-decoration: underline;
-        color: "#FFFFFF";
+        color: #CACACA;
     }
 """
+
 
 plain_problem_button_style_light = """
     QPushButton {
@@ -425,14 +464,6 @@ plain_problem_button_style_light = """
         margin-left: 20px;
         padding: 0px;
         width: 100%;
-    }
-    QPushButton:hover {
-        text-decoration: underline;
-        color: black;
-    }
-    QPushButton:pressed {
-        text-decoration: underline;
-        color: "#191919";
     }
 """
 
@@ -449,42 +480,106 @@ plain_problem_button_style_dark = """
         padding: 0px;
         width: 100%;
     }
-    QPushButton:hover {
-        text-decoration: underline;
-        color: white;
-    }
-    QPushButton:pressed {
-        text-decoration: underline;
-        color: "#FFFFFF";
+"""
+
+
+current_problem_button_style_light = """
+    QPushButton {
+        background-color: transparent;
+        border: none;
+        color: #5038D0;
+        text-align: left;
+        text-decoration: none;
+        font-size: 14px;
+        height: 15px;
+        margin-left: 20px;
+        padding: 0px;
+        width: 100%;
     }
 """
 
+current_problem_button_style_dark = """
+    QPushButton {
+        background-color: transparent;
+        border: none;
+        color: #7070C0;
+        text-align: left;
+        text-decoration: none;
+        font-size: 14px;
+        height: 15px;
+        margin-left: 20px;
+        padding: 0px;
+        width: 100%;
+    }
+"""
+
+
+error_with_problem_button_style_light = """
+    QPushButton {
+        background-color: transparent;
+        border: none;
+        color: #C02020;
+        text-align: left;
+        text-decoration: none;
+        font-size: 14px;
+        height: 15px;
+        margin-left: 20px;
+        padding: 0px;
+        width: 100%;
+    }
+"""
+
+error_with_problem_button_style_dark = """
+    QPushButton {
+        background-color: transparent;
+        border: none;
+        color: #B73030;
+        text-align: left;
+        text-decoration: none;
+        font-size: 14px;
+        height: 15px;
+        margin-left: 20px;
+        padding: 0px;
+        width: 100%;
+    }
+"""
+
+class Styles:
 # Choose the styles based on the lightness
-if False:
-    print(lightness)
-    # Light mode
-    button_style = button_style_light
-    focused_button_style = focused_button_style_light
-    unfocused_button_style = unfocused_button_style_light
-    disabled_button_style = disabled_button_style_light
-    top_chapter_button_style = top_chapter_button_light
-    link_button_style = link_button_style_light
-    checkmark_button_style = checkmark_button_style_light
-    zoom_button_style = zoom_button_style_light
-    delete_button_style = delete_button_style_light
-    plain_chaspter_button_style = plain_chapter_button_style_light
-    plain_problem_button_style = plain_problem_button_style_light
-else:
-    print(lightness)
-    # Dark mode
-    button_style = button_style_dark
-    focused_button_style = focused_button_style_dark
-    unfocused_button_style = unfocused_button_style_dark
-    disabled_button_style = disabled_button_style_dark
-    top_chapter_button_style = top_chapter_button_dark
-    link_button_style = link_button_style_dark
-    checkmark_button_style = checkmark_button_style_dark
-    zoom_button_style = zoom_button_style_dark
-    delete_button_style = delete_button_style_dark
-    plain_chapter_button_style = plain_chapter_button_style_dark
-    plain_problem_button_style = plain_problem_button_style_dark
+    def __init__(self, settings = None):
+        self.settings_dict = settings.settings_dict
+
+        if self.settings_dict['color_scheme'] == 'light':
+            # Light mode
+            self.button_style = button_style_light
+            self.focused_button_style = focused_button_style_light
+            self.unfocused_button_style = unfocused_button_style_light
+            self.disabled_button_style = disabled_button_style_light
+            self.top_chapter_button_style = top_chapter_button_light
+            self.link_button_style = link_button_style_light
+            self.checkmark_button_style = checkmark_button_style_light
+            self.zoom_button_style = zoom_button_style_light
+            self.delete_button_style = delete_button_style_light
+            self.plain_chapter_button_style = plain_chapter_button_style_light
+            self.plain_problem_button_style = plain_problem_button_style_light
+            self.app_style = app_style_light
+            self.chapter_button_style = chapter_button_style_light
+            self.current_problem_button_style = current_problem_button_style_light
+            self.error_with_problem_button_style = error_with_problem_button_style_light
+        else:
+            # Dark mode
+            self.button_style = button_style_dark
+            self.focused_button_style = focused_button_style_dark
+            self.unfocused_button_style = unfocused_button_style_dark
+            self.disabled_button_style = disabled_button_style_dark
+            self.top_chapter_button_style = top_chapter_button_dark
+            self.link_button_style = link_button_style_dark
+            self.checkmark_button_style = checkmark_button_style_dark
+            self.zoom_button_style = zoom_button_style_dark
+            self.delete_button_style = delete_button_style_dark
+            self.plain_chapter_button_style = plain_chapter_button_style_dark
+            self.plain_problem_button_style = plain_problem_button_style_dark
+            self.app_style = app_style_dark
+            self.chapter_button_style = chapter_button_style_dark
+            self.current_problem_button_style = current_problem_button_style_dark
+            self.error_with_problem_button_style = error_with_problem_button_style_dark

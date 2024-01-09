@@ -13,6 +13,7 @@ class OneLineTextEdit(QTextEdit):
         self.setAcceptRichText(False)        
 
     def keyPressEvent(self, event):
+        # Create new chapter when enter is pressed
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             new_chapter = self.toPlainText()
             self.ref.create_new_chapter(new_chapter)

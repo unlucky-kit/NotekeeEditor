@@ -1,0 +1,8 @@
+# *.json
+test.py
+
+images/
+
+*.DS_Store
+
+*.pyc
