@@ -18,7 +18,7 @@ class Settings:
 
     def default_settings(self):
         Settings.settings_dict = {
-            'window_position': [0, 0],
+            'window_position': [120, 120],
             'window_size': [800, 600],
             'color_scheme': 'dark',
             'export_index': 0,
