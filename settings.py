@@ -44,12 +44,19 @@ class Settings:
     def get_current_problem_index(self):
         return Settings.settings_dict['current_problem_index']
     
+    
     def save_window_position_and_size(self, window):
         screen = QApplication.desktop().screenGeometry()
 
         # Get the window position and size
         pos = window.pos()
         size = window.size()
+
+        # Get the height of the title bar
+        title_bar_height = window.frameGeometry().height() - window.geometry().height()
+
+        # Adjust the y-coordinate of the position
+        pos.setY(pos.y() + title_bar_height)
 
         # Check if the window is outside the screen and adjust if necessary
         if pos.x() < 0:
@@ -61,13 +68,12 @@ class Settings:
         if pos.y() + size.height() > screen.height():
             pos.setY(screen.height() - size.height())
 
-        pos = [pos.x(), pos.y()]
-        size = [size.width(), size.height()]
-        
+        # Save the position and size to the settings
+        Settings.settings_dict['window_position'] = [pos.x(), pos.y()]
+        Settings.settings_dict['window_size'] = [size.width(), size.height()]
 
-        Settings.settings_dict['window_position'] = pos
-        Settings.settings_dict['window_size'] = size
         self.save_settings()
+
     
     def save_current_problem_index(self, index):
         Settings.settings_dict['current_problem_index'] = index

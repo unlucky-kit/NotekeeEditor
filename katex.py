@@ -381,7 +381,7 @@ class MathPlayground(QMainWindow):
         # Create a QTextEdit for KaTeX input
         self.katex_input = QTextEdit(self)
         font = QFont("Courier New")
-        font.setPointSize(15)
+        font.setPointSize(13)
         self.katex_input.setFont(font)
         self.katex_input.setPlaceholderText("Enter KaTeX here...")
         if self.question != '':
@@ -452,7 +452,9 @@ class MathPlayground(QMainWindow):
             update_button.clicked.connect(lambda: webbrowser.open(update_url))
 
         button_layout.addWidget(all_problems_button)
+        button_layout.addSpacing(8)
         button_layout.addWidget(self.export_import_button)
+        button_layout.addSpacing(8)
         button_layout.addWidget(color_scheme_button)
         button_layout.addStretch(1)
         button_layout.addWidget(upload_image_button)
@@ -487,47 +489,58 @@ class MathPlayground(QMainWindow):
         self.all_problems_layout_widget = None
 
     def upload_zip(self):
-        # Get the path to the Desktop
-        desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+        try:
+            # Get the path to the Desktop
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
 
-        # Specify the name of the zip file
-        zip_file_name = QFileDialog.getOpenFileName(self, 'Open file', desktop, 'Zip files (*.zip)')[0]
+            # Specify the name of the zip file
+            zip_file_name = QFileDialog.getOpenFileName(self, 'Open file', desktop, 'Zip files (*.zip)')[0]
 
-        # If the user didn't select a file, do nothing
-        if zip_file_name == '':
-            return
+            # If the user didn't select a file, do nothing
+            if zip_file_name == '':
+                return
 
-        # Extract the zip file
-        with zipfile.ZipFile(zip_file_name, 'r') as zipf:
-            zipf.extractall()
+            # Extract the zip file
+            with zipfile.ZipFile(zip_file_name, 'r') as zipf:
+                zipf.extractall()
 
-        # Load the problems and chapters from the json files
-        problems_file = open('problems.json', 'r')
-        chapters_file = open('chapters.json', 'r')
+            # Load the problems and chapters from the json files
+            with open('problems.json', 'r') as problems_file, open('chapters.json', 'r') as chapters_file:
+                self.problems = json.load(problems_file)
+                self.chapters = list(set(self.chapters + json.load(chapters_file)))
 
-        self.problems = json.load(problems_file)
-        self.chapters = list(set(self.chapters + json.load(chapters_file)))
+            # Add images to the images folder
+            for foldername, _, filenames in os.walk('images'):
+                for filename in filenames:
+                    if filename != '.gitkeep':  # Exclude .gitkeep files
+                        os.rename(os.path.join(foldername, filename), os.path.join('images', filename))
 
-        # Add images to the images folder
-        for foldername, _, filenames in os.walk('images'):
-            for filename in filenames:
-                if filename != '.gitkeep':  # Exclude .gitkeep files
-                    os.rename(os.path.join(foldername, filename), os.path.join('images', filename))
+            # Get the last problem's data
+            if self.problems:
+                current_problem = self.problems[self.current_problem_index]
+                self.question = current_problem.get('question', '')
+                self.solution = current_problem.get('solution', '')
+                self.current_chapter = current_problem.get('chapter', '')
+            else:
+                raise Exception("No problems found in the problems.json file")
 
-        # Get the last problem's data
-        current_problem = self.problems[self.current_problem_index]
-        self.question = current_problem.get('question', '')
-        self.solution = current_problem.get('solution', '')
-        self.current_chapter = current_problem.get('chapter', '')
+            if len(self.problems) > 1:
+                self.export_or_import = 'export'
+                self.export_import_button.setText('Export')
+            elif self.problems == []:
+                self.problems = [{'question': '', 'solution': '', 'chapter': '', 'question_images': [], 'solution_images': []}]
 
-        if len(self.problems) > 1:
-            self.export_or_import = 'export'
-            self.export_import_button.setText('Export')
-        elif self.problems == []:
-            self.problems = [{'question': '', 'solution': '', 'chapter': '', 'question_images': [], 'solution_images': []}]
+            # Rebuild the whole UI
+            self.rebuild_ui()
 
-        # Rebuild the whole UI
-        self.rebuild_ui()
+        except FileNotFoundError as fnf_error:
+            print(f"File not found: {fnf_error}")
+        except json.JSONDecodeError as json_error:
+            print(f"Invalid JSON file: {json_error}")
+        except zipfile.BadZipFile as zip_error:
+            print(f"Invalid zip file: {zip_error}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
     def handle_zip(self):
@@ -639,12 +652,12 @@ class MathPlayground(QMainWindow):
 
         # Removing vertical padding from the buttons
         spacer1 = QSpacerItem(-5, -5, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        spacer2 = QSpacerItem(-10, -10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        # spacer2 = QSpacerItem(-10, -10, QSizePolicy.Minimum, QSizePolicy.Fixed)
         spacer3 = QSpacerItem(-5, -5, QSizePolicy.Minimum, QSizePolicy.Fixed)
         
         secondary_layout.addItem(spacer1)
         secondary_layout.addLayout(self.build_top_button_layout())
-        secondary_layout.addItem(spacer2)
+        # secondary_layout.addItem(spacer2)
 
         
         secondary_layout.addLayout(self.build_workspace_layout())
@@ -712,7 +725,8 @@ class MathPlayground(QMainWindow):
 
                 for i in range(len(chapter_problems[chapter])):
                     problem = chapter_problems[chapter][i]
-                    problem_button = QPushButton(f'{i + 1}. {problem['question'].replace('\n', '')}', self)
+                    problem_question = problem['question'].replace('\n', ' ')
+                    problem_button = QPushButton(f'{i + 1}. {problem_question}', self)
                     problem_button.clicked.connect(lambda _, problem=problem: self.load_problem(problem))
                     problem_button.setCursor(Qt.PointingHandCursor)
                     if self.problems.index(problem) != self.current_problem_index:

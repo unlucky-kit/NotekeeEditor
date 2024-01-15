@@ -24,8 +24,9 @@ button_style_light = """
         text-align: center;
         text-decoration: none;
         font-size: 12px;
-        padding: 10px 10px;
-        margin: 0px;
+        padding: 0px 10px;
+        height: 35px;
+        margin: 0px 0px 0px 0px;
     }
     QPushButton:hover {
         background-color: #d0d0d0;
@@ -43,8 +44,9 @@ button_style_dark = """
         text-align: center;
         text-decoration: none;
         font-size: 12px;
-        padding: 10px 10px;
-        margin: 0px;
+        padding: 0px 10px;
+        height: 35px;
+        margin: 0px 0px 0px 0px;
     }
     QPushButton:hover {
         background-color: #808080;
@@ -101,8 +103,9 @@ disabled_button_style_light = """
         text-align: center;
         text-decoration: none;
         font-size: 12px;
-        padding: 10px 10px;
-        margin: 0px;
+        padding: 0px 10px;
+        height: 35px;
+        margin: 0px 0px 0px 0px;
     }
 """
 
@@ -114,8 +117,9 @@ disabled_button_style_dark = """
         text-align: center;
         text-decoration: none;
         font-size: 12px;
-        padding: 10px 10px;
-        margin: 0px;
+        padding: 0px 10px;
+        height: 35px;
+        margin: 0px 0px 0px 0px;
     }
 """
 

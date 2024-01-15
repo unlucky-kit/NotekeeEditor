@@ -7,3 +7,7 @@ images/
 *.DS_Store
 
 *.pyc
+
+.vscode/
+
+__pycache__/
