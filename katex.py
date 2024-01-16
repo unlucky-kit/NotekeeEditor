@@ -11,6 +11,8 @@ from PIL import Image, ImageOps
 from OneLineTextEdit import *
 import requests, webbrowser, uuid, os, zipfile, json
 from settings import Settings
+import appdirs
+
 
 
 class CustomScrollArea(QScrollArea):
@@ -25,7 +27,7 @@ class CustomScrollArea(QScrollArea):
             self.main_instance.scale_images(self.scroll_layout, self)
 
 
-class MathPlayground(QMainWindow):
+class NotekeeEditor(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -55,31 +57,44 @@ class MathPlayground(QMainWindow):
         self.all_problems_layout_widget = None
 
         try:
-            # Load problems and chapters from json files
-            problems_file = open('problems.json', 'r')
-            chapters_file = open('chapters.json', 'r')
+            # This is the name of your application
+            app_name = 'NotekeeEditor'
 
-            # Put the data from the json files into lists
-            self.problems = json.load(problems_file)
-            self.chapters = json.load(chapters_file)
+            # This is the path to the application data directory
+            app_dir = appdirs.user_data_dir(app_name)
+
+            # Create the problems.json and chapters.json files if they do not exist
+            problems_file_path = os.path.join(app_dir, 'problems.json')
+            chapters_file_path = os.path.join(app_dir, 'chapters.json')
+
+            if not os.path.exists(problems_file_path):
+                with open(problems_file_path, 'w') as problems_file:
+                    json.dump([], problems_file)
+
+            if not os.path.exists(chapters_file_path):
+                with open(chapters_file_path, 'w') as chapters_file:
+                    json.dump([], chapters_file)
+
+            # Load problems and chapters from json files in the application data directory
+            with open(problems_file_path, 'r') as problems_file, open(chapters_file_path, 'r') as chapters_file:
+                # Put the data from the json files into lists
+                self.problems = json.load(problems_file)
+                self.chapters = json.load(chapters_file)
 
             if self.problems == []:
                 raise FileNotFoundError
-            
 
             temp_current_problem_index = self.settings.get_current_problem_index()
             if temp_current_problem_index > len(self.problems) - 1:
                 self.current_problem_index = len(self.problems) - 1
             else: 
                 self.current_problem_index = temp_current_problem_index
-                
 
-            
             current_problem = self.problems[self.current_problem_index]
             self.question = current_problem.get('question', '')
             self.solution = current_problem.get('solution', '')
             self.current_chapter = current_problem.get('chapter', '')
-            
+
             if len(self.problems) > 1:
                 self.export_or_import = 'export'
 
@@ -87,12 +102,11 @@ class MathPlayground(QMainWindow):
             print("JSON FILE DOES NOT EXIST")
             self.problems = [{'question': '', 'solution': '', 'chapter': '', 'question_images': [], 'solution_images': []}]
             self.chapters = []
-            
+
         except json.JSONDecodeError:
             print("FAILED TO LOAD JSON FILE")
             self.problems = [{'question': '', 'solution': '', 'chapter': '', 'question_images': [], 'solution_images': []}]
             self.chapters = []
-
 
         self.init_ui()
 
@@ -164,8 +178,14 @@ class MathPlayground(QMainWindow):
             current_problem = self.problems[self.current_problem_index]
             current_problem[self.current_mode + '_images'].remove(image)
 
-            # Delete image file
-            os.remove(f'images/{image}.webp')
+            # This is the name of your application
+            app_name = 'NotekeeEditor'
+
+            # This is the path to the application data directory
+            app_dir = appdirs.user_data_dir(app_name)
+
+            # Delete image file from the images folder in the application data directory
+            os.remove(os.path.join(app_dir, 'images', f'{image}.webp'))
 
             if self.zoomed_image_widget is not None:
                 self.zoom_out_image()
@@ -187,9 +207,15 @@ class MathPlayground(QMainWindow):
         # Create a QVBoxLayout for the zoomed image widget
         zoomed_image_layout = QVBoxLayout(self.zoomed_image_widget)
 
-        # Load the image
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
+        # Load the image from the images folder in the application data directory
         label = QLabel(self)
-        pixmap = QPixmap(f'images/{image}.webp')
+        pixmap = QPixmap(os.path.join(app_dir, 'images', f'{image}.webp'))
         label.setPixmap(pixmap)
         label.setProperty('originalPixmap', pixmap)  # Set the original QPixmap as a property of the label
         zoomed_image_layout.addWidget(label)
@@ -262,6 +288,13 @@ class MathPlayground(QMainWindow):
 
         current_problem = self.problems[self.current_problem_index]
         current_image_list = current_problem[self.current_mode + '_images']
+
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
         for image in current_image_list:
             image_widget = QWidget()
             image_layout = QVBoxLayout(image_widget)
@@ -271,7 +304,9 @@ class MathPlayground(QMainWindow):
 
             label = QLabel(self)
             label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            pixmap = QPixmap(f'images/{image}.webp')
+
+            # Load the image from the images folder in the application data directory
+            pixmap = QPixmap(os.path.join(app_dir, 'images', f'{image}.webp'))
             label.setPixmap(pixmap)
             label.setProperty('originalPixmap', pixmap)
             label.setAlignment(Qt.AlignCenter)
@@ -490,6 +525,12 @@ class MathPlayground(QMainWindow):
 
     def upload_zip(self):
         try:
+            # This is the name of your application
+            app_name = 'NotekeeEditor'
+
+            # This is the path to the application data directory
+            app_dir = appdirs.user_data_dir(app_name)
+
             # Get the path to the Desktop
             desktop = os.path.join(os.path.expanduser("~"), "Desktop")
 
@@ -500,20 +541,20 @@ class MathPlayground(QMainWindow):
             if zip_file_name == '':
                 return
 
-            # Extract the zip file
+            # Extract the zip file to the application data directory
             with zipfile.ZipFile(zip_file_name, 'r') as zipf:
-                zipf.extractall()
+                zipf.extractall(app_dir)
 
-            # Load the problems and chapters from the json files
-            with open('problems.json', 'r') as problems_file, open('chapters.json', 'r') as chapters_file:
+            # Load the problems and chapters from the json files in the application data directory
+            with open(os.path.join(app_dir, 'problems.json'), 'r') as problems_file, open(os.path.join(app_dir, 'chapters.json'), 'r') as chapters_file:
                 self.problems = json.load(problems_file)
                 self.chapters = list(set(self.chapters + json.load(chapters_file)))
 
-            # Add images to the images folder
-            for foldername, _, filenames in os.walk('images'):
+            # Add images to the images folder in the application data directory
+            for foldername, _, filenames in os.walk(os.path.join(app_dir, 'images')):
                 for filename in filenames:
                     if filename != '.gitkeep':  # Exclude .gitkeep files
-                        os.rename(os.path.join(foldername, filename), os.path.join('images', filename))
+                        os.rename(os.path.join(foldername, filename), os.path.join(app_dir, 'images', filename))
 
             # Get the last problem's data
             if self.problems:
@@ -550,16 +591,32 @@ class MathPlayground(QMainWindow):
             self.upload_zip()
 
     def create_zip(self, destination):
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
         with zipfile.ZipFile(destination, 'w') as zipf:
-            zipf.write('problems.json')
-            zipf.write('chapters.json')
-            for foldername, _, filenames in os.walk('images'):
+            # Write the problems.json and chapters.json files from the application data directory to the zip file
+            zipf.write(os.path.join(app_dir, 'problems.json'), arcname='problems.json')
+            zipf.write(os.path.join(app_dir, 'chapters.json'), arcname='chapters.json')
+
+            # Write the images from the images folder in the application data directory to the zip file
+            for foldername, _, filenames in os.walk(os.path.join(app_dir, 'images')):
                 for filename in filenames:
-                    zipf.write(os.path.join(foldername, filename))
+                    zipf.write(os.path.join(foldername, filename), arcname=os.path.join('images', filename))
+
 
     # Will return None if everything is good, otherwise will return an error message
     def problems_json_error_message(self):
-        with open('problems.json', 'r') as file:
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
+        with open(os.path.join(app_dir, 'problems.json'), 'r') as file:
             data = json.load(file)
             
             for problem in data:
@@ -568,7 +625,7 @@ class MathPlayground(QMainWindow):
                 elif problem['solution'] == '' and problem['solution_images'] == []:
                     return "At least one problem has no solution!"
 
-            return None  
+            return None
 
 
     def download_zip(self):
@@ -858,7 +915,13 @@ class MathPlayground(QMainWindow):
 
 
     def save_to_chapters(self):
-        with open('chapters.json', 'w') as file:
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
+        with open(os.path.join(app_dir, 'chapters.json'), 'w') as file:
             json.dump(self.chapters, file, indent=4)
 
     def delete_empty_problems(self):
@@ -883,8 +946,7 @@ class MathPlayground(QMainWindow):
                     self.problems.pop(self.current_problem_index)
                 if can_skip_saving:
                     return
-            
-        
+
         current_problem = self.problems[self.current_problem_index]
 
         # Update the current problem's data if it has changes
@@ -894,14 +956,12 @@ class MathPlayground(QMainWindow):
             current_problem['solution'] = self.solution
         if current_problem['chapter'] != self.current_chapter:
             current_problem['chapter'] = self.current_chapter
-        
 
         # Remove empty problems from json's version of data
         clean_problems = []
         for problem in self.problems:
             if problem['question'] != '' or problem['solution'] != '' or problem['question_images'] != [] or problem['solution_images'] != []:
                 clean_problems.append(problem)
-
 
         if self.export_or_import == 'import' and len(clean_problems) > 1:
             self.export_or_import = 'export'
@@ -910,8 +970,14 @@ class MathPlayground(QMainWindow):
             self.export_or_import = 'import'
             self.export_import_button.setText('Import')
 
-        # Save the data to the json file
-        with open('problems.json', 'w') as file:
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
+        # Save the data to the json file in the application data directory
+        with open(os.path.join(app_dir, 'problems.json'), 'w') as file:
             json.dump(clean_problems, file, indent=4)
 
 
@@ -1201,7 +1267,19 @@ class MathPlayground(QMainWindow):
             img.thumbnail(max_size)  # Resize the image, maintaining aspect ratio
 
             uuid_str = str(uuid.uuid4())
-            destination = 'images/' + uuid_str + '.webp'
+
+            # This is the name of your application
+            app_name = 'NotekeeEditor'
+
+            # This is the path to the application data directory
+            app_dir = appdirs.user_data_dir(app_name)
+
+            # Create the images directory if it does not exist
+            images_dir = os.path.join(app_dir, 'images')
+            os.makedirs(images_dir, exist_ok=True)
+
+            # Save the image in the images folder in the application data directory
+            destination = os.path.join(images_dir, f'{uuid_str}.webp')
 
             current_problem = self.problems[self.current_problem_index]
             current_problem[self.current_mode + '_images'].append(uuid_str)
@@ -1278,13 +1356,3 @@ class MathPlayground(QMainWindow):
         self.settings.save_window_position_and_size(self)
         self.settings.save_current_problem_index(self.current_problem_index)
         event.accept()
-
-# Run the application if this file is executed directly
-if __name__ == "__main__":
-    import sys
-
-    app = QApplication(sys.argv)
-    # app.setStyleSheet(app_style)
-    playground = MathPlayground()
-    playground.show()
-    sys.exit(app.exec_())

@@ -1,17 +1,24 @@
 import json
 from PyQt5.QtWidgets import QApplication
-# from styles import Styles
+import appdirs
+import os
 
 class Settings:
     settings_dict = {}
     
     def __init__(self):
         try:
-            # Load settings from json file
-            with open('settings.json', 'r') as f:
+            # This is the name of your application
+            app_name = 'NotekeeEditor'
+
+            # This is the path to the application data directory
+            app_dir = appdirs.user_data_dir(app_name)
+
+            # Load settings from json file in the application data directory
+            with open(os.path.join(app_dir, 'settings.json'), 'r') as f:
                 Settings.settings_dict = json.load(f)
 
-        except json.JSONDecodeError or FileNotFoundError:
+        except (json.JSONDecodeError, FileNotFoundError):
             self.default_settings()
             self.save_settings()
 
@@ -21,7 +28,7 @@ class Settings:
             'window_position': [120, 120],
             'window_size': [800, 600],
             'color_scheme': 'dark',
-            'export_index': 0,
+            'export_index': 1,
             'current_problem_index': 0
         }
 
@@ -87,10 +94,18 @@ class Settings:
 
         self.save_settings()
 
+
     def save_settings(self):
-        # Save changes to json file
-        with open('settings.json', 'w') as f:
+        # This is the name of your application
+        app_name = 'NotekeeEditor'
+
+        # This is the path to the application data directory
+        app_dir = appdirs.user_data_dir(app_name)
+
+        # Check if the directory exists and create it if it doesn't
+        os.makedirs(app_dir, exist_ok=True)
+
+        # Save changes to json file in the application data directory
+        with open(os.path.join(app_dir, 'settings.json'), 'w') as f:
             json.dump(Settings.settings_dict, f, indent=4)
-
-
 
