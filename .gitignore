@@ -2,8 +2,6 @@
 
 test.py
 
-images/
-
 *.DS_Store
 
 *.pyc
@@ -11,3 +9,5 @@ images/
 .vscode/
 
 __pycache__/
+
+.idea/
